@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-"""Build report.json and a fixed 3:4 HTML report from evidence and scores."""
+"""Build report.json and the fixed 3:4 PNG report."""
 
 from __future__ import annotations
 
 import argparse
-import html
 import json
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -83,6 +81,19 @@ def confidence_copy(axis: dict) -> str:
     return f"几乎对半，微偏 {letter}"
 
 
+def report_stats(evidence: dict) -> list[dict]:
+    metadata = evidence["metadata"]
+    gray = evidence["gray_features"]
+    peak_hour = gray.get("peak_activity_hour", {}).get("value")
+    late_ratio = gray.get("late_night_activity_ratio", {}).get("value")
+    return [
+        {"value": f"{metadata.get('valid_file_count', 0):,}", "label": "有效文件"},
+        {"value": f"{metadata.get('project_count', 0):,}", "label": "识别出的项目"},
+        {"value": f"{int(peak_hour):02d}:00" if peak_hour is not None else "--", "label": "最高产时段"},
+        {"value": f"{late_ratio * 100:.0f}%" if late_ratio is not None else "--", "label": "深夜产出占比"},
+    ]
+
+
 def main():
     args = parse_args()
     evidence = json.loads(Path(args.evidence).read_text(encoding="utf-8"))
@@ -137,78 +148,43 @@ def main():
         })
 
     report = {
-        "schema_version": "1.0.0",
-        "report_version": "1.0.0-beta",
+        "schema_version": "1.1.0",
+        "report_version": "1.1.0-beta",
         "type": type_code,
         "name": profile["name"],
         "camp": f"{profile['camp']}｜{camp['name']}",
         "tagline": profile["tagline"],
         "evidence": evidence_slots[:3],
         "axes": axes,
+        "stats": report_stats(evidence),
         "colors": {key: profile[key] for key in ("scarf", "bg", "accent", "text")},
         "personality_image": f"assets/{profile.get('image', f'{type_code}.png')}",
-        "privacy_copy": "仅基于授权范围内的脱敏本地证据",
+        "privacy_copy": "只读不改 · 不上传 · 敏感内容自动跳过",
         "campaign_tag": "#生成我的数字分身报告"
     }
 
     output_dir = Path(args.output_dir).expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     skill_root = Path(__file__).resolve().parent.parent
-    template_path = skill_root / "assets" / "report-template" / "template.html"
-    style_path = skill_root / "assets" / "report-template" / "style.css"
-    template = template_path.read_text(encoding="utf-8")
-    style = style_path.read_text(encoding="utf-8")
     personality_filename = Path(report["personality_image"]).name
     personality_source = skill_root / "assets" / "personalities" / personality_filename
     if not personality_source.exists():
         raise SystemExit(f"Missing personality image: {personality_source}")
-    personality_target = output_dir / report["personality_image"]
-    personality_target.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(personality_source, personality_target)
-
-    evidence_html = "".join(
-        f'<article class="evidence-item"><div class="evidence-index">0{index}</div><div><h3>{html.escape(item["title"])}</h3><p>{html.escape(item["text"])}</p></div></article>'
-        for index, item in enumerate(report["evidence"], start=1)
-    )
-    axes_html = "".join(
-        f'<div class="axis-row"><div class="axis-name"><strong>{item["letter"]}</strong><span>{html.escape(item["label"])}</span></div><div class="axis-track"><i style="width:{item["score"]}%"></i></div><div class="axis-score"><strong>{item["score"]}</strong><span>{html.escape(item["confidence_copy"])}</span></div></div>'
-        for item in axes
-    )
-    replacements = {
-        "{{STYLE}}": style,
-        "{{BG}}": profile["bg"],
-        "{{ACCENT}}": profile["accent"],
-        "{{TEXT}}": profile["text"],
-        "{{TYPE}}": type_code,
-        "{{NAME}}": html.escape(profile["name"]),
-        "{{CAMP}}": html.escape(report["camp"]),
-        "{{TAGLINE}}": html.escape(profile["tagline"]),
-        "{{EVIDENCE}}": evidence_html,
-        "{{AXES}}": axes_html,
-        "{{PERSONALITY_IMAGE}}": html.escape(report["personality_image"]),
-        "{{PRIVACY}}": html.escape(report["privacy_copy"]),
-        "{{TAG}}": html.escape(report["campaign_tag"])
-    }
-    for key, value in replacements.items():
-        template = template.replace(key, value)
     report_json = output_dir / "report.json"
-    report_html = output_dir / "report.html"
     report_png = output_dir / "report.png"
     report_json.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    report_html.write_text(template, encoding="utf-8")
     subprocess.run([
         sys.executable,
         str(skill_root / "scripts" / "render_report_png.py"),
         "--report", str(report_json),
-        "--personality-image", str(personality_target),
+        "--personality-image", str(personality_source),
         "--output", str(report_png),
     ], check=True)
     print(json.dumps({
         "output_dir": str(output_dir),
         "type": type_code,
         "report_png": str(report_png),
-        "report_html": str(report_html),
-        "personality_asset": str(personality_target),
+        "personality_asset": str(personality_source),
     }, ensure_ascii=False))
 
 

@@ -7,7 +7,7 @@ One row equals one anonymized run. The row contains:
 - consent and anonymous run identifiers;
 - M scan metadata and data-quality coverage;
 - all W scoring metrics, including missing/degraded state;
-- all G zero-weight research candidates;
+- all G zero-weight research candidates, including active-hour, weekday, and extension distributions;
 - four-axis scores, confidence, coverage, and metric contributions;
 - raw/display work type and scorer version;
 - beta labels and 1-7 ratings after feedback is collected.
@@ -21,3 +21,5 @@ A long-format audit table. One row equals one W or G field. Use it to inspect wh
 ## Privacy
 
 Neither table stores source text, filenames, paths, names, contact details, or detected entities. `research_consent=no` means the files remain local and must not be submitted or uploaded.
+
+The first beta schema is intentionally broad enough for 48-80 participant calibration. G fields include the peak activity hour and privacy-safe aggregate distributions, but their scoring weight remains zero until cohort analysis justifies promotion.

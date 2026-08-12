@@ -38,7 +38,7 @@ The pipeline must produce all of these before the run is complete:
 - `output/report.json`: structured report content.
 - `output/internal/evidence.json` and `output/internal/score.json`: internal reproducibility files; do not present them as the data-collection table.
 
-`output/report.html` is an optional preview artifact. `output/assets/<TYPE>.png` is only the source personality illustration copied into the HTML. **Neither is the final report image.**
+The pipeline does not generate an HTML report. The 16 source personality illustrations stay inside the Skill and must not be registered as user products.
 
 ## Marvis Product Registration
 
@@ -47,30 +47,26 @@ After the pipeline succeeds:
 1. Register `report.png`, `data_collection.csv`, `evidence_table.csv`, and `data_manifest.json` with `declare_products`.
 2. Display `report.png` directly with `yyb-image-gallery` or the available image viewer.
 3. Make both CSV files downloadable. Briefly explain that `data_collection.csv` is the one-row sample for later merging.
-4. Do not register `report.html` as the primary product.
-5. Do not register `assets/<TYPE>.png`; it is the personality illustration, not the report.
+4. Do not create or register an HTML report.
+5. Do not register `assets/personalities/<TYPE>.png`; it is the source illustration, not the report.
 6. Do not claim completion if `report.png` or either CSV is missing.
 
 ## Beta Feedback
 
-In beta mode, score without psychological MBTI. Display `report.png` first, then ask for the validation fields required by `references/feedback-schema.json` and run:
+In beta mode, score without psychological MBTI. Display `report.png` first, then ask for the validation fields required by `references/feedback-schema.json`. After the user answers, run one finalization command. It writes `feedback.json` and refreshes all research exports atomically:
 
 ```bash
-python scripts/collect_feedback.py \
+python scripts/finalize_feedback.py \
+  --evidence output/internal/evidence.json \
   --score output/internal/score.json \
-  --output output/feedback.json \
+  --config references/scoring-v1.json \
+  --output-dir output \
+  --research-consent yes \
   --psychological-type ENFJ \
   --psychological-type-source formal_test \
   --ei-fit 6 --sn-fit 5 --tf-fit 7 --jp-fit 4 \
   --overall-fit 6 --evidence-accuracy 6 --quirk-fun 5 \
   --privacy-comfort 7 --share-intent 6
-python scripts/export_dataset.py \
-  --evidence output/internal/evidence.json \
-  --score output/internal/score.json \
-  --config references/scoring-v1.json \
-  --feedback output/feedback.json \
-  --output-dir output \
-  --research-consent yes
 ```
 
 Re-register the updated `data_collection.csv` and `feedback.json`. Psychological MBTI must be collected only after raw scoring and must never alter the current beta result.
@@ -79,7 +75,7 @@ For the public comparison campaign, use `run_pipeline.py --mode campaign_compare
 
 ## Output Meaning
 
-- `data_collection.csv` includes M metadata, all 18 W metrics, G zero-weight candidates, four axis results, scoring/config versions, privacy audit, consent, and beta feedback when collected.
+- `data_collection.csv` includes M metadata, all 18 W metrics, G zero-weight candidates and aggregate distributions, four axis results, scoring/config versions, privacy audit, consent, and beta feedback when collected.
 - `evidence_table.csv` lists each W/G field with evidence values, coverage, reliability, source lineage, and scoring weight.
 - The tables contain no raw text, filenames, full paths, names, contacts, or recovered entities.
 - One user's files stay local unless they explicitly submit them. Automatic multi-user aggregation requires a product-approved upload endpoint; do not invent one.

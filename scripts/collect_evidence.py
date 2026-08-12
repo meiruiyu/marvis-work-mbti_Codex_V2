@@ -18,7 +18,7 @@ from pathlib import Path
 from xml.etree import ElementTree
 
 
-VERSION = "1.0.0-beta"
+VERSION = "1.1.0-beta"
 NOW = dt.datetime.now(dt.timezone.utc)
 
 EXCLUDED_DIRS = {
@@ -500,15 +500,33 @@ def main() -> int:
     late_night = 0.0
     weekend = 0.0
     activity_total = 0.0
+    hourly_activity = collections.defaultdict(float)
+    weekday_activity = collections.defaultdict(float)
     for record in records:
         if record["age_days"] > 365 or record["batch_event"]:
             continue
         when = dt.datetime.fromtimestamp(record["mtime"])
         activity_total += record["recency"]
+        hourly_activity[when.hour] += record["recency"]
+        weekday_activity[when.weekday()] += record["recency"]
         if when.hour < 6 or when.hour >= 23:
             late_night += record["recency"]
         if when.weekday() >= 5:
             weekend += record["recency"]
+
+    peak_activity_hour = max(hourly_activity, key=hourly_activity.get) if hourly_activity else None
+    hourly_distribution = {
+        str(hour): round(hourly_activity.get(hour, 0) / activity_total, 4) if activity_total else 0
+        for hour in range(24)
+    }
+    weekday_distribution = {
+        str(day): round(weekday_activity.get(day, 0) / activity_total, 4) if activity_total else 0
+        for day in range(7)
+    }
+    extension_distribution = {
+        (extension or "no_extension"): count
+        for extension, count in sorted(extension_counts.items())
+    }
 
     semantic_reliability = 0.8 if semantic_volume_coverage >= 0.6 else 0.5
     white_metrics = {
@@ -544,6 +562,10 @@ def main() -> int:
         "screenshot_ratio": gray(round(screenshot_count / len(image_records), 4) if image_records else 0, "ratio", "image.filename_proxy"),
         "late_night_activity_ratio": gray(round(late_night / activity_total, 4) if activity_total else 0, "ratio", "timestamp.work_rhythm"),
         "weekend_activity_ratio": gray(round(weekend / activity_total, 4) if activity_total else 0, "ratio", "timestamp.work_rhythm"),
+        "peak_activity_hour": gray(peak_activity_hour, "hour_0_23", "timestamp.work_rhythm"),
+        "hourly_activity_distribution": gray(hourly_distribution, "ratio_by_hour", "timestamp.work_rhythm"),
+        "weekday_activity_distribution": gray(weekday_distribution, "ratio_by_weekday", "timestamp.work_rhythm"),
+        "extension_distribution": gray(extension_distribution, "files_by_extension", "filesystem.extensions"),
         "oldest_file_age_days": gray(max((r["age_days"] for r in records), default=0), "days", "filesystem.history"),
         "parallel_project_count": gray(sum(1 for items in projects.values() if any(r["age_days"] <= 90 for r in items)), "projects", "project.activity"),
         "structured_version_count_weighted": gray(round(structured, 1), "weighted_files", "filename.version_structure"),

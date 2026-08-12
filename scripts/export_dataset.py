@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import datetime as dt
 import hashlib
 import json
 from pathlib import Path
@@ -128,15 +129,27 @@ def main():
             })
 
     manifest = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
+        "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "anonymous_run_id": run_id,
         "participant_id": participant_id,
         "research_consent": args.research_consent,
-        "contains_raw_text": False,
-        "contains_filenames": False,
-        "contains_full_paths": False,
+        "authorization": {
+            "authorized_root_count": evidence["metadata"].get("authorized_root_count", 0),
+            "authorized_root_ids": evidence["metadata"].get("authorized_root_ids", []),
+            "scan_started_at": evidence["metadata"].get("scan_started_at"),
+            "scan_finished_at": evidence["metadata"].get("scan_finished_at"),
+        },
+        "privacy": {
+            "contains_raw_text": False,
+            "contains_filenames": False,
+            "contains_full_paths": False,
+            "contains_personal_entities": False,
+            "local_only_until_explicit_submission": True,
+        },
+        "feedback_status": "collected" if feedback else "pending_user_response",
         "feedback_included": bool(feedback),
-        "files": [collection_path.name, table_path.name],
+        "files": [collection_path.name, table_path.name] + (["feedback.json"] if feedback else []),
     }
     manifest_path = output_dir / "data_manifest.json"
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
