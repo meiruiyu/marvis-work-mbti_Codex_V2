@@ -7,6 +7,8 @@ import argparse
 import html
 import json
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 
@@ -144,7 +146,7 @@ def main():
         "evidence": evidence_slots[:3],
         "axes": axes,
         "colors": {key: profile[key] for key in ("scarf", "bg", "accent", "text")},
-        "personality_image": profile.get("image", f"{type_code}.png"),
+        "personality_image": f"assets/{profile.get('image', f'{type_code}.png')}",
         "privacy_copy": "仅基于授权范围内的脱敏本地证据",
         "campaign_tag": "#生成我的数字分身报告"
     }
@@ -156,10 +158,12 @@ def main():
     style_path = skill_root / "assets" / "report-template" / "style.css"
     template = template_path.read_text(encoding="utf-8")
     style = style_path.read_text(encoding="utf-8")
-    personality_source = skill_root / "assets" / "personalities" / report["personality_image"]
+    personality_filename = Path(report["personality_image"]).name
+    personality_source = skill_root / "assets" / "personalities" / personality_filename
     if not personality_source.exists():
         raise SystemExit(f"Missing personality image: {personality_source}")
     personality_target = output_dir / report["personality_image"]
+    personality_target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(personality_source, personality_target)
 
     evidence_html = "".join(
@@ -187,9 +191,25 @@ def main():
     }
     for key, value in replacements.items():
         template = template.replace(key, value)
-    (output_dir / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    (output_dir / "report.html").write_text(template, encoding="utf-8")
-    print(json.dumps({"output_dir": str(output_dir), "type": type_code, "html": str(output_dir / "report.html")}, ensure_ascii=False))
+    report_json = output_dir / "report.json"
+    report_html = output_dir / "report.html"
+    report_png = output_dir / "report.png"
+    report_json.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    report_html.write_text(template, encoding="utf-8")
+    subprocess.run([
+        sys.executable,
+        str(skill_root / "scripts" / "render_report_png.py"),
+        "--report", str(report_json),
+        "--personality-image", str(personality_target),
+        "--output", str(report_png),
+    ], check=True)
+    print(json.dumps({
+        "output_dir": str(output_dir),
+        "type": type_code,
+        "report_png": str(report_png),
+        "report_html": str(report_html),
+        "personality_asset": str(personality_target),
+    }, ensure_ascii=False))
 
 
 if __name__ == "__main__":
