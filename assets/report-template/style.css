@@ -15,7 +15,7 @@ body {
   letter-spacing: 0;
 }
 .poster { position: relative; width: 900px; height: 1200px; padding: 57px 64px 0; overflow: hidden; }
-.watermark {
+.type-mark {
   position: absolute; z-index: 0; top: 73px; left: 470px;
   font-size: 145px; line-height: 1; font-weight: 700; color: var(--accent); opacity: .07;
   white-space: nowrap;

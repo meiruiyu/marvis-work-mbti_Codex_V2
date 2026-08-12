@@ -39,6 +39,8 @@ The pipeline must produce all of these before the run is complete:
 - `output/report.json`: structured report content.
 - `output/internal/evidence.json` and `output/internal/score.json`: internal reproducibility files; do not present them as the data-collection table.
 
+For `beta_blind`, the first pipeline stage is only `awaiting_feedback`, not complete. A beta user's run is complete only after `feedback.json` exists, `data_collection.csv` has been refreshed with the feedback labels, and `scripts/validate_products.py --require-feedback` passes.
+
 The pipeline first fills the fixed `assets/report-template/` HTML/CSS with report data, then takes a deterministic Chromium screenshot at exactly 900×1200. `report.html` is an intermediate preview; `report.png` is the final report. Never ask an image model to redraw text, charts, or layout. The 16 source personality illustrations stay inside the Skill and must not be registered as user products.
 
 The visual palette follows the bundled scarf image, not the MBTI camp:
@@ -50,6 +52,8 @@ The visual palette follows the bundled scarf image, not the MBTI camp:
 
 Only fill type, name, tagline, evidence, axes, stats, and the matching personality image. Do not redesign the template or choose new colors during a run.
 
+The final poster must contain no AI-provider watermark, “AI generated” label, model logo, or external image resource. The bottom-right campaign tag is Marvis campaign copy, not an AI watermark. Run `scripts/validate_products.py` before registering products.
+
 ## Marvis Product Registration
 
 After the pipeline succeeds:
@@ -59,7 +63,7 @@ After the pipeline succeeds:
 3. Make both CSV files downloadable. Briefly explain that `data_collection.csv` is the one-row sample for later merging.
 4. Do not register `report.html` as the final report; it is the deterministic screenshot source.
 5. Do not register `assets/personalities/<TYPE>.png`; it is the source illustration, not the report.
-6. Do not claim completion if `report.png` or either CSV is missing.
+6. Do not claim completion if `report.png`, either CSV, `data_manifest.json`, or required beta `feedback.json` is missing.
 
 ## Beta Feedback
 
@@ -79,7 +83,7 @@ python scripts/finalize_feedback.py \
   --privacy-comfort 7 --share-intent 6
 ```
 
-Re-register the updated `data_collection.csv` and `feedback.json`. Psychological MBTI must be collected only after raw scoring and must never alter the current beta result.
+Re-register the updated `data_collection.csv`, `evidence_table.csv`, `data_manifest.json`, and `feedback.json`. Psychological MBTI must be collected only after raw scoring and must never alter the current beta result. A beta run may be called complete only after the finalizer prints `status: complete`.
 
 For the public comparison campaign, use `run_pipeline.py --mode campaign_compare --psychological-type ENFJ`. Never use comparison mode to evaluate beta accuracy.
 

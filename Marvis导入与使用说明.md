@@ -22,6 +22,8 @@
 6. 同步生成 `data_collection.csv`、`evidence_table.csv` 和 `data_manifest.json`。
 7. 测试期在报告生成后收集心理 MBTI 和 1-7 分反馈；提交后自动生成 `feedback.json` 并刷新研究数据表。
 
+内测流程分两态：首次扫描后是 `awaiting_feedback`；只有反馈文件生成、研究表刷新、最终产物校验通过后才是 `complete`。最终 PNG 不得出现 AI 平台水印、模型 Logo 或外链素材，右下角只保留 Marvis 活动标签。
+
 运行结果应写到 Skill 外的独立目录，并在下次扫描时通过 `--exclude` 排除，防止报告再次被当成工作证据。
 
 ## 两种评分模式

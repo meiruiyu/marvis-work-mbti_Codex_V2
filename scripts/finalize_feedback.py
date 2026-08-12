@@ -68,7 +68,11 @@ def main() -> None:
     missing = [str(path) for path in required if not path.exists() or path.stat().st_size == 0]
     if missing:
         raise SystemExit("Feedback finalization incomplete: " + ", ".join(missing))
-    print(f"Feedback and research exports refreshed in {output_dir}")
+    subprocess.run([
+        sys.executable, str(skill_root / "scripts" / "validate_products.py"),
+        "--output-dir", str(output_dir), "--require-feedback",
+    ], check=True)
+    print(f"Beta run complete; feedback and research exports refreshed in {output_dir}")
 
 
 if __name__ == "__main__":

@@ -93,9 +93,13 @@ def main():
     missing = [str(path) for path in required if not path.exists() or path.stat().st_size == 0]
     if missing:
         raise SystemExit("Pipeline incomplete; missing products: " + ", ".join(missing))
+    run([
+        sys.executable, str(skill_root / "scripts" / "validate_products.py"),
+        "--output-dir", str(output_dir),
+    ])
     result = json.loads(score.read_text(encoding="utf-8"))
     print(json.dumps({
-        "status": "complete",
+        "status": "awaiting_feedback" if args.mode == "beta_blind" else "complete",
         "raw_work_type": result["raw_work_type"],
         "display_type": result["display_type"],
         "primary_product": str(output_dir / "report.png"),
@@ -105,6 +109,7 @@ def main():
             str(output_dir / "data_manifest.json"),
         ],
         "internal_products": [str(evidence), str(score)],
+        "next_required_action": "collect_beta_feedback" if args.mode == "beta_blind" else None,
     }, ensure_ascii=False))
 
 
