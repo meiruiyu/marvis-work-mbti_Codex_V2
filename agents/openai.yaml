@@ -1,0 +1,6 @@
+interface:
+  display_name: "Marvis 工作版 MBTI"
+  short_description: "安全扫描本地工作证据并生成可验证的工作人格报告"
+  default_prompt: "Use $marvis-work-mbti to scan my authorized workspace and generate a privacy-safe work MBTI report."
+policy:
+  allow_implicit_invocation: true

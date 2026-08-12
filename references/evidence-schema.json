@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marvis.local/schemas/work-mbti-evidence-v1.json",
+  "title": "Marvis Work MBTI Evidence",
+  "type": "object",
+  "required": ["schema_version", "metadata", "white_metrics", "gray_features", "privacy_audit"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "metadata": {
+      "type": "object",
+      "required": ["collector_version", "scan_started_at", "scan_finished_at", "authorized_root_count", "time_windows", "project_count", "sampled_document_count"],
+      "additionalProperties": true
+    },
+    "white_metrics": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/metric"}
+    },
+    "gray_features": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/gray"}
+    },
+    "privacy_audit": {
+      "type": "object",
+      "required": ["raw_text_retained", "filenames_retained", "full_paths_retained", "excluded_counts"],
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "metric": {
+      "type": "object",
+      "required": ["status", "left", "right", "reliability", "coverage", "source_lineage"],
+      "properties": {
+        "status": {"enum": ["available", "degraded", "missing"]},
+        "left": {"type": "number", "minimum": 0},
+        "right": {"type": "number", "minimum": 0},
+        "reliability": {"type": "number", "minimum": 0, "maximum": 1},
+        "coverage": {"type": "number", "minimum": 0, "maximum": 1},
+        "source_lineage": {"type": "array", "items": {"type": "string"}},
+        "display": {"type": "object"},
+        "windows": {
+          "type": "object",
+          "properties": {
+            "0_90": {"$ref": "#/$defs/pair"},
+            "0_365": {"$ref": "#/$defs/pair"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "pair": {
+      "type": "object",
+      "required": ["left", "right"],
+      "properties": {"left": {"type": "number", "minimum": 0}, "right": {"type": "number", "minimum": 0}},
+      "additionalProperties": false
+    },
+    "gray": {
+      "type": "object",
+      "required": ["value", "unit", "scoring_weight", "source_lineage"],
+      "properties": {
+        "value": {},
+        "unit": {"type": "string"},
+        "scoring_weight": {"const": 0},
+        "source_lineage": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }
+  }
+}

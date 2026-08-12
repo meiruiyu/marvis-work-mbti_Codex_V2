@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marvis.local/schemas/work-mbti-feedback-v1.json",
+  "title": "Marvis Work MBTI Beta Feedback",
+  "type": "object",
+  "required": ["schema_version", "raw_work_type", "psychological_type", "psychological_type_source", "matched_letters", "axis_fit", "overall_fit", "evidence_accuracy", "quirk_fun", "privacy_comfort", "share_intent"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "raw_work_type": {"type": "string", "pattern": "^[EI][SN][TF][JP]$"},
+    "psychological_type": {"type": "string", "pattern": "^[EI][SN][TF][JP]$"},
+    "psychological_type_source": {"enum": ["known", "formal_test", "micro_questions"]},
+    "matched_letters": {"type": "integer", "minimum": 0, "maximum": 4},
+    "axis_fit": {
+      "type": "object",
+      "required": ["EI", "SN", "TF", "JP"],
+      "properties": {
+        "EI": {"type": "integer", "minimum": 1, "maximum": 7},
+        "SN": {"type": "integer", "minimum": 1, "maximum": 7},
+        "TF": {"type": "integer", "minimum": 1, "maximum": 7},
+        "JP": {"type": "integer", "minimum": 1, "maximum": 7}
+      },
+      "additionalProperties": false
+    },
+    "overall_fit": {"type": "integer", "minimum": 1, "maximum": 7},
+    "evidence_accuracy": {"type": "integer", "minimum": 1, "maximum": 7},
+    "quirk_fun": {"type": "integer", "minimum": 1, "maximum": 7},
+    "privacy_comfort": {"type": "integer", "minimum": 1, "maximum": 7},
+    "share_intent": {"type": "integer", "minimum": 1, "maximum": 7},
+    "most_accurate_metric": {"type": "string"},
+    "least_accurate_metric": {"type": "string"},
+    "occupation_group": {"type": "string"},
+    "experience_band": {"type": "string"}
+  },
+  "additionalProperties": false
+}

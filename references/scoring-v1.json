@@ -1,0 +1,104 @@
+{
+  "version": "1.0.0-beta",
+  "formula": {
+    "smoothing_alpha": 3.0,
+    "tendency_scale": 0.3,
+    "metric_effective_cap": 0.34,
+    "project_contribution_cap": 0.15,
+    "recency_weights": {"0_90": 1.0, "91_180": 0.6, "181_365": 0.3, "over_365": 0.0}
+  },
+  "confidence": {
+    "high": {"minimum_gap": 25, "minimum_coverage": 0.6, "minimum_sources": 3},
+    "medium": {"minimum_gap": 10, "minimum_coverage": 0.4, "minimum_sources": 2},
+    "stability_downgrade_when_recent_direction_differs": true
+  },
+  "campaign_compare": {
+    "minimum_gap_to_flip": 30,
+    "minimum_coverage_to_flip": 0.75,
+    "minimum_sources_to_flip": 3,
+    "maximum_flips": 2
+  },
+  "axes": {
+    "EI": {
+      "left": "E",
+      "right": "I",
+      "left_label": "外放协作型",
+      "right_label": "深潜独立型",
+      "metrics": [
+        {"id": "E1", "name": "文档面向对象占比", "weight": 0.38, "default_reliability": 0.5, "lineage": "sample.semantic.audience"},
+        {"id": "E2", "name": "产出角色协作性", "weight": 0.25, "default_reliability": 0.5, "lineage": "sample.semantic.role"},
+        {"id": "E3", "name": "协作命名与实体密度", "weight": 0.22, "default_reliability": 0.5, "lineage": "filename.collaboration_entities"},
+        {"id": "E4", "name": "协作应用活跃度代理", "weight": 0.15, "default_reliability": 0.4, "lineage": "app.activity_proxy.collaboration"}
+      ]
+    },
+    "SN": {
+      "left": "S",
+      "right": "N",
+      "left_label": "具体执行型",
+      "right_label": "洞察创想型",
+      "metrics": [
+        {"id": "S1", "name": "具体任务与概念探索语义", "weight": 0.38, "default_reliability": 0.5, "lineage": "sample.semantic.information_style"},
+        {"id": "S2", "name": "交付型与探索型产出占比", "weight": 0.30, "default_reliability": 1.0, "lineage": "artifact.role.delivery_exploration"},
+        {"id": "S3", "name": "项目收敛链与分支探索链", "weight": 0.22, "default_reliability": 0.5, "lineage": "project.version_topology"},
+        {"id": "S4", "name": "项目内跨主题混搭指数", "weight": 0.10, "default_reliability": 1.0, "lineage": "project.topic_mix"}
+      ]
+    },
+    "TF": {
+      "left": "T",
+      "right": "F",
+      "left_label": "逻辑结果型",
+      "right_label": "体验表达型",
+      "metrics": [
+        {"id": "T1", "name": "决策语言双边占比", "weight": 0.40, "default_reliability": 0.5, "lineage": "sample.semantic.decision_language"},
+        {"id": "T2", "name": "项目目的双边占比", "weight": 0.30, "default_reliability": 0.6, "lineage": "project.purpose"},
+        {"id": "T3", "name": "数据验证与视觉表达迭代", "weight": 0.18, "default_reliability": 1.0, "lineage": "project.iteration_mode"},
+        {"id": "T4", "name": "开发数据与创意表达应用活跃度", "weight": 0.12, "default_reliability": 0.4, "lineage": "app.activity_proxy.work_mode"}
+      ]
+    },
+    "JP": {
+      "left": "J",
+      "right": "P",
+      "left_label": "规划归档型",
+      "right_label": "灵活探索型",
+      "metrics": [
+        {"id": "J1", "name": "周期性交付链", "weight": 0.25, "default_reliability": 1.0, "lineage": "filename.periodic_chain"},
+        {"id": "J2", "name": "结构化命名与版本收口率", "weight": 0.25, "default_reliability": 1.0, "lineage": "filename.version_structure"},
+        {"id": "J3", "name": "项目完整交付与归档率", "weight": 0.20, "default_reliability": 0.6, "lineage": "project.terminal_state"},
+        {"id": "J4", "name": "文件夹分类体系一致性", "weight": 0.15, "default_reliability": 1.0, "lineage": "folder.taxonomy_consistency"},
+        {"id": "J5", "name": "近期活跃区散落与临时文件比", "weight": 0.10, "default_reliability": 1.0, "lineage": "active_area.organization"},
+        {"id": "J6", "name": "周期节点规律性", "weight": 0.05, "default_reliability": 1.0, "lineage": "timestamp.deadline_regularity"}
+      ]
+    }
+  },
+  "disabled_for_scoring": [
+    "file_total",
+    "desktop_file_absolute_count",
+    "desktop_size_bytes",
+    "disk_free_bytes",
+    "installed_app_count",
+    "installed_app_category_count",
+    "image_total",
+    "selfie_ratio",
+    "screenshot_ratio",
+    "uptime_hours",
+    "late_night_activity_ratio",
+    "weekend_activity_ratio",
+    "oldest_download_age_days",
+    "maximum_file_size_bytes"
+  ],
+  "hard_rules": [
+    "one_derived_fact_once_per_axis",
+    "require_source_lineage",
+    "aggregate_by_project_before_scoring",
+    "cap_single_project_at_15_percent",
+    "cap_effective_metric_contribution_at_34_percent",
+    "installed_apps_never_score",
+    "absolute_counts_never_determine_letters",
+    "desktop_clutter_only_scores_JP",
+    "night_activity_and_uptime_never_score",
+    "folder_structure_only_scores_JP",
+    "exclude_system_cache_package_duplicate_files",
+    "exclude_batch_timestamp_events",
+    "downgrade_when_recent_direction_differs"
+  ]
+}
