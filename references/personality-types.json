@@ -1,5 +1,11 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "palettes": {
+    "red": {"name": "红围脖", "bg": "#F9E9EF", "accent": "#8D2447", "text": "#520E28", "soft": "#F2D5E0", "track": "#EBCFD9"},
+    "green": {"name": "绿围脖", "bg": "#EAF7F3", "accent": "#08735E", "text": "#064F42", "soft": "#D7ECE5", "track": "#CEE5DE"},
+    "yellow": {"name": "黄围脖", "bg": "#FFF1C7", "accent": "#B87D18", "text": "#5A3B08", "soft": "#F6E3A9", "track": "#EFD89B"},
+    "purple": {"name": "紫围脖", "bg": "#F1F0FF", "accent": "#5549BD", "text": "#342D8E", "soft": "#E2E0F8", "track": "#D8D6F1"}
+  },
   "camps": {
     "NT": {"name": "解题脑", "description": "爱研究、搭逻辑、想新解法"},
     "NF": {"name": "灵感脑", "description": "爱创意、表达、洞察人与意义"},
@@ -7,21 +13,21 @@
     "SP": {"name": "行动脑", "description": "爱上手、边做边改、即时解决"}
   },
   "types": {
-    "ISTJ": {"name": "归档执行官", "camp": "SJ", "tagline": "你的电脑最让人安心：什么在哪、做到哪，一清二楚。", "scarf": "#2E9C82", "bg": "#EAF7F1", "accent": "#16725D", "text": "#173A31", "mascot_filter": "hue-rotate(115deg) saturate(.72)", "evidence_slots": ["J1", "J2", "J5"]},
-    "ISFJ": {"name": "幕后支援官", "camp": "SJ", "tagline": "别人还没开口，你已经把资料和备份准备好了。", "scarf": "#49AD8E", "bg": "#EFF9F5", "accent": "#237B64", "text": "#193B33", "mascot_filter": "hue-rotate(105deg) saturate(.65)", "evidence_slots": ["E2", "S2", "J1"]},
-    "ESTJ": {"name": "项目推进官", "camp": "SJ", "tagline": "项目到你手里，很快就会有排期、负责人和截止日期。", "scarf": "#168C73", "bg": "#E4F5EF", "accent": "#0B6955", "text": "#12372E", "mascot_filter": "hue-rotate(125deg) saturate(.8)", "evidence_slots": ["J1", "J6", "E1"]},
-    "ESFJ": {"name": "团队协调官", "camp": "SJ", "tagline": "你最擅长的，是让团队所有人知道下一步该干什么。", "scarf": "#61B99D", "bg": "#F1FAF6", "accent": "#2D806A", "text": "#1B3F36", "mascot_filter": "hue-rotate(98deg) saturate(.6)", "evidence_slots": ["E3", "E1", "J1"]},
-    "INTJ": {"name": "系统战略家", "camp": "NT", "tagline": "别人赶 deadline，你已经在搭下一阶段的系统。", "scarf": "#6673D9", "bg": "#EEF0FF", "accent": "#4653B7", "text": "#252A5C", "mascot_filter": "hue-rotate(225deg) saturate(.75)", "evidence_slots": ["J1", "T2", "S3"]},
-    "INTP": {"name": "脑洞研究员", "camp": "NT", "tagline": "一个问题，能让你顺手研究出十个新问题。", "scarf": "#7A70D8", "bg": "#F1EFFF", "accent": "#5549B7", "text": "#30295C", "mascot_filter": "hue-rotate(235deg) saturate(.7)", "evidence_slots": ["S2", "T2", "S3"]},
-    "ENTJ": {"name": "战略指挥官", "camp": "NT", "tagline": "目标一出现，你已经开始拆路径、调资源、盯结果。", "scarf": "#5364C8", "bg": "#E9EDFF", "accent": "#3545A7", "text": "#202957", "mascot_filter": "hue-rotate(215deg) saturate(.8)", "evidence_slots": ["J1", "T2", "E1"]},
-    "ENTP": {"name": "方案实验家", "camp": "NT", "tagline": "你最常说的一句话：有没有另一种解法？", "scarf": "#8A78E0", "bg": "#F3F0FF", "accent": "#624EBE", "text": "#34295F", "mascot_filter": "hue-rotate(242deg) saturate(.72)", "evidence_slots": ["E4", "S3", "J2"]},
-    "INFJ": {"name": "洞察策展人", "camp": "NF", "tagline": "你擅长从一堆信息里，找到那个真正值得讲的点。", "scarf": "#E87886", "bg": "#FFF0F2", "accent": "#BD4C5A", "text": "#5A252C", "mascot_filter": "hue-rotate(342deg) saturate(.72)", "evidence_slots": ["T1", "S4", "E1"]},
-    "INFP": {"name": "灵感收藏家", "camp": "NF", "tagline": "你的电脑不是乱，是每个草稿都藏着一个想讲的故事。", "scarf": "#EE8792", "bg": "#FFF3F4", "accent": "#C95764", "text": "#5D2930", "mascot_filter": "hue-rotate(350deg) saturate(.65)", "evidence_slots": ["S2", "J2", "T1"]},
-    "ENFJ": {"name": "共识推动者", "camp": "NF", "tagline": "你擅长把一个想法，变成大家都愿意一起做的事。", "scarf": "#DE6979", "bg": "#FDECEF", "accent": "#B64152", "text": "#542028", "mascot_filter": "hue-rotate(335deg) saturate(.8)", "evidence_slots": ["E1", "T1", "J1"]},
-    "ENFP": {"name": "点子发电机", "camp": "NF", "tagline": "一个需求到你这里，常常能长出五个新点子。", "scarf": "#F0929C", "bg": "#FFF5F5", "accent": "#C9616C", "text": "#612C32", "mascot_filter": "hue-rotate(355deg) saturate(.6)", "evidence_slots": ["S2", "J2", "S4"]},
-    "ISTP": {"name": "实操解题手", "camp": "SP", "tagline": "遇到问题你擅长直接拆开、试试、修掉。", "scarf": "#E5A22F", "bg": "#FFF1C9", "accent": "#B9760B", "text": "#553707", "mascot_filter": "hue-rotate(48deg) saturate(.9)", "evidence_slots": ["T3", "S2", "J5"]},
-    "ISFP": {"name": "质感创作家", "camp": "SP", "tagline": "同一份东西到你手里，总能变得更顺眼一点。", "scarf": "#EDB24B", "bg": "#FFF4D6", "accent": "#B9821E", "text": "#583E0C", "mascot_filter": "hue-rotate(55deg) saturate(.78)", "evidence_slots": ["T3", "T2", "S1"]},
-    "ESTP": {"name": "临场开工王", "camp": "SP", "tagline": "任务来了先开干，很多问题都是做着做着解决的。", "scarf": "#DA941D", "bg": "#FFE8AE", "accent": "#A96800", "text": "#513300", "mascot_filter": "hue-rotate(42deg) saturate(1)", "evidence_slots": ["S4", "T3", "J5"]},
-    "ESFP": {"name": "氛围输出机", "camp": "SP", "tagline": "你的电脑像自带发布键，素材随时都能变成内容。", "scarf": "#F0BC5B", "bg": "#FFF0C6", "accent": "#B98728", "text": "#594113", "mascot_filter": "hue-rotate(60deg) saturate(.7)", "evidence_slots": ["T2", "E1", "E2"]}
+    "ISTJ": {"name": "归档执行官", "camp": "SJ", "palette": "green", "tagline": "你的电脑最让人安心：什么在哪、做到哪，一清二楚。", "evidence_slots": ["J1", "J2", "J5"]},
+    "ISFJ": {"name": "幕后支援官", "camp": "SJ", "palette": "green", "tagline": "别人还没开口，你已经把资料和备份准备好了。", "evidence_slots": ["E2", "S2", "J1"]},
+    "ESTJ": {"name": "项目推进官", "camp": "SJ", "palette": "red", "tagline": "项目到你手里，很快就会有排期、负责人和截止日期。", "evidence_slots": ["J1", "J6", "E1"]},
+    "ESFJ": {"name": "团队协调官", "camp": "SJ", "palette": "red", "tagline": "你最擅长的，是让团队所有人知道下一步该干什么。", "evidence_slots": ["E3", "E1", "J1"]},
+    "INTJ": {"name": "系统战略家", "camp": "NT", "palette": "purple", "tagline": "别人赶 deadline，你已经在搭下一阶段的系统。", "evidence_slots": ["J1", "T2", "S3"]},
+    "INTP": {"name": "脑洞研究员", "camp": "NT", "palette": "purple", "tagline": "一个问题，能让你顺手研究出十个新问题。", "evidence_slots": ["S2", "T2", "S3"]},
+    "ENTJ": {"name": "战略指挥官", "camp": "NT", "palette": "red", "tagline": "目标一出现，你已经开始拆路径、调资源、盯结果。", "evidence_slots": ["J1", "T2", "E1"]},
+    "ENTP": {"name": "方案实验家", "camp": "NT", "palette": "purple", "tagline": "你最常说的一句话：有没有另一种解法？", "evidence_slots": ["E4", "S3", "J2"]},
+    "INFJ": {"name": "洞察策展人", "camp": "NF", "palette": "green", "tagline": "你擅长从一堆信息里，找到那个真正值得讲的点。", "evidence_slots": ["T1", "S4", "E1"]},
+    "INFP": {"name": "灵感收藏家", "camp": "NF", "palette": "green", "tagline": "你的电脑不是乱，是每个草稿都藏着一个想讲的故事。", "evidence_slots": ["S2", "J2", "T1"]},
+    "ENFJ": {"name": "共识推动者", "camp": "NF", "palette": "red", "tagline": "你擅长把一个想法，变成大家都愿意一起做的事。", "evidence_slots": ["E1", "T1", "J1"]},
+    "ENFP": {"name": "点子发电机", "camp": "NF", "palette": "green", "tagline": "一个需求到你这里，常常能长出五个新点子。", "evidence_slots": ["S2", "J2", "S4"]},
+    "ISTP": {"name": "实操解题手", "camp": "SP", "palette": "yellow", "tagline": "遇到问题你擅长直接拆开、试试、修掉。", "evidence_slots": ["T3", "S2", "J5"]},
+    "ISFP": {"name": "质感创作家", "camp": "SP", "palette": "yellow", "tagline": "同一份东西到你手里，总能变得更顺眼一点。", "evidence_slots": ["T3", "T2", "S1"]},
+    "ESTP": {"name": "临场开工王", "camp": "SP", "palette": "yellow", "tagline": "任务来了先开干，很多问题都是做着做着解决的。", "evidence_slots": ["S4", "T3", "J5"]},
+    "ESFP": {"name": "氛围输出机", "camp": "SP", "palette": "yellow", "tagline": "你的电脑像自带发布键，素材随时都能变成内容。", "evidence_slots": ["T2", "E1", "E2"]}
   }
 }

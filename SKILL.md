@@ -32,13 +32,23 @@ python scripts/run_pipeline.py \
 The pipeline must produce all of these before the run is complete:
 
 - `output/report.png`: **primary user-facing product**, the complete 900x1200 report image.
+- `output/report.html`: fixed-size intermediate poster used only as the screenshot source.
 - `output/data_collection.csv`: one privacy-safe row per participant/run for later sample merging and model analysis.
 - `output/evidence_table.csv`: readable W/G evidence-detail table.
 - `output/data_manifest.json`: consent and privacy manifest.
 - `output/report.json`: structured report content.
 - `output/internal/evidence.json` and `output/internal/score.json`: internal reproducibility files; do not present them as the data-collection table.
 
-The pipeline does not generate an HTML report. The 16 source personality illustrations stay inside the Skill and must not be registered as user products.
+The pipeline first fills the fixed `assets/report-template/` HTML/CSS with report data, then takes a deterministic Chromium screenshot at exactly 900×1200. `report.html` is an intermediate preview; `report.png` is the final report. Never ask an image model to redraw text, charts, or layout. The 16 source personality illustrations stay inside the Skill and must not be registered as user products.
+
+The visual palette follows the bundled scarf image, not the MBTI camp:
+
+- red/pink: ENFJ, ENTJ, ESFJ, ESTJ;
+- green/mint: ENFP, INFP, INFJ, ISFJ, ISTJ;
+- yellow: ESFP, ESTP, ISFP, ISTP;
+- purple: ENTP, INTJ, INTP.
+
+Only fill type, name, tagline, evidence, axes, stats, and the matching personality image. Do not redesign the template or choose new colors during a run.
 
 ## Marvis Product Registration
 
@@ -47,7 +57,7 @@ After the pipeline succeeds:
 1. Register `report.png`, `data_collection.csv`, `evidence_table.csv`, and `data_manifest.json` with `declare_products`.
 2. Display `report.png` directly with `yyb-image-gallery` or the available image viewer.
 3. Make both CSV files downloadable. Briefly explain that `data_collection.csv` is the one-row sample for later merging.
-4. Do not create or register an HTML report.
+4. Do not register `report.html` as the final report; it is the deterministic screenshot source.
 5. Do not register `assets/personalities/<TYPE>.png`; it is the source illustration, not the report.
 6. Do not claim completion if `report.png` or either CSV is missing.
 
@@ -87,4 +97,4 @@ For the public comparison campaign, use `run_pipeline.py --mode campaign_compare
 - G fields have scoring weight zero and are used only for report quirks and later aggregate analysis.
 - Application installation counts, uptime, late-night activity, and absolute clutter never determine letters.
 - Generated output directories must be outside the skill package and excluded from the next scan.
-- If Pillow or a CJK font is unavailable, stop and report that `report.png` could not be rendered. Do not silently fall back to HTML.
+- Rendering requires a local Chrome/Chromium executable. If unavailable, stop and report that `report.png` could not be rendered. Do not silently deliver HTML or invoke an image model.

@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Build report.json and the fixed 3:4 PNG report."""
+"""Build report.json, fill the fixed HTML template, and screenshot it to PNG."""
 
 from __future__ import annotations
 
 import argparse
+import base64
+import html
 import json
 import subprocess
 import sys
@@ -81,6 +83,10 @@ def confidence_copy(axis: dict) -> str:
     return f"几乎对半，微偏 {letter}"
 
 
+def confidence_label(value: str) -> str:
+    return {"high": "高置信", "medium": "中置信", "low": "低置信"}.get(value, "低置信")
+
+
 def report_stats(evidence: dict) -> list[dict]:
     metadata = evidence["metadata"]
     gray = evidence["gray_features"]
@@ -102,6 +108,7 @@ def main():
     type_code = score["display_type"]
     profile = types["types"][type_code]
     camp = types["camps"][profile["camp"]]
+    palette = types["palettes"][profile["palette"]]
 
     all_metrics = []
     for axis_id, axis in score["axes"].items():
@@ -148,8 +155,8 @@ def main():
         })
 
     report = {
-        "schema_version": "1.1.0",
-        "report_version": "1.1.0-beta",
+        "schema_version": "1.2.0",
+        "report_version": "1.2.0-beta",
         "type": type_code,
         "name": profile["name"],
         "camp": f"{profile['camp']}｜{camp['name']}",
@@ -157,8 +164,10 @@ def main():
         "evidence": evidence_slots[:3],
         "axes": axes,
         "stats": report_stats(evidence),
-        "colors": {key: profile[key] for key in ("scarf", "bg", "accent", "text")},
-        "personality_image": f"assets/{profile.get('image', f'{type_code}.png')}",
+        "palette": profile["palette"],
+        "scarf_group": palette["name"],
+        "colors": {key: palette[key] for key in ("bg", "accent", "text", "soft", "track")},
+        "personality_image": f"assets/personalities/{profile.get('image', f'{type_code}.png')}",
         "privacy_copy": "只读不改 · 不上传 · 敏感内容自动跳过",
         "campaign_tag": "#生成我的数字分身报告"
     }
@@ -171,18 +180,69 @@ def main():
     if not personality_source.exists():
         raise SystemExit(f"Missing personality image: {personality_source}")
     report_json = output_dir / "report.json"
+    report_html = output_dir / "report.html"
     report_png = output_dir / "report.png"
     report_json.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    template_dir = skill_root / "assets" / "report-template"
+    template = (template_dir / "template.html").read_text(encoding="utf-8")
+    style = (template_dir / "style.css").read_text(encoding="utf-8")
+    personality_data = base64.b64encode(personality_source.read_bytes()).decode("ascii")
+    evidence_html = "".join(
+        '<li><span class="dot"></span><p>'
+        f'<strong>{html.escape(item["title"])}</strong>'
+        f'<span>：{html.escape(item["text"])}</span></p></li>'
+        for item in report["evidence"]
+    )
+    axes_html = "".join(
+        '<div class="axis-row">'
+        f'<div class="axis-letter">{html.escape(axis["letter"])}</div>'
+        f'<div class="axis-label">{html.escape(axis["label"])}</div>'
+        '<div class="axis-track">'
+        f'<div class="axis-fill" style="width:{axis["score"]}%"></div></div>'
+        f'<div class="axis-score">{axis["score"]}</div>'
+        f'<div class="axis-confidence">{confidence_label(axis["confidence"])}</div>'
+        '</div>'
+        for axis in report["axes"]
+    )
+    stats_html = "".join(
+        '<div class="stat">'
+        f'<strong>{html.escape(stat["value"])}</strong>'
+        f'<span>{html.escape(stat["label"])}</span></div>'
+        for stat in report["stats"]
+    )
+    replacements = {
+        "{{STYLE}}": style,
+        "{{BG}}": palette["bg"],
+        "{{ACCENT}}": palette["accent"],
+        "{{TEXT}}": palette["text"],
+        "{{SOFT}}": palette["soft"],
+        "{{TRACK}}": palette["track"],
+        "{{TYPE}}": html.escape(type_code),
+        "{{NAME}}": html.escape(profile["name"]),
+        "{{TAGLINE}}": html.escape(profile["tagline"]),
+        "{{EVIDENCE}}": evidence_html,
+        "{{AXES}}": axes_html,
+        "{{STATS}}": stats_html,
+        "{{PERSONALITY_DATA}}": personality_data,
+        "{{PRIVACY}}": html.escape(report["privacy_copy"]),
+        "{{TAG}}": html.escape(report["campaign_tag"]),
+    }
+    for key, value in replacements.items():
+        template = template.replace(key, value)
+    report_html.write_text(template, encoding="utf-8")
+
     subprocess.run([
         sys.executable,
         str(skill_root / "scripts" / "render_report_png.py"),
-        "--report", str(report_json),
-        "--personality-image", str(personality_source),
+        "--html", str(report_html),
         "--output", str(report_png),
     ], check=True)
     print(json.dumps({
         "output_dir": str(output_dir),
         "type": type_code,
+        "palette": profile["palette"],
+        "report_html": str(report_html),
         "report_png": str(report_png),
         "personality_asset": str(personality_source),
     }, ensure_ascii=False))

@@ -82,6 +82,7 @@ def main():
 
     required = [
         output_dir / "report.png",
+        output_dir / "report.html",
         output_dir / "report.json",
         output_dir / "data_collection.csv",
         output_dir / "evidence_table.csv",

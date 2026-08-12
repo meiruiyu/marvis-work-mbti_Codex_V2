@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=900, initial-scale=1">
+  <title>Marvis 工作版 MBTI</title>
+  <style>{{STYLE}}</style>
+</head>
+<body>
+  <main class="poster">
+    <div class="watermark">{{TYPE}}</div>
+    <header>
+      <div class="eyebrow">你的 Marvis 工作版 MBTI</div>
+      <div class="identity"><span>{{TYPE}}</span><strong>{{NAME}}</strong></div>
+      <div class="tagline">{{TAGLINE}}</div>
+    </header>
+
+    <section class="evidence-section">
+      <div class="section-title">三条铁证 · 你的电脑说的</div>
+      <ol class="evidence-list">{{EVIDENCE}}</ol>
+      <div class="mascot-frame">
+        <img src="data:image/png;base64,{{PERSONALITY_DATA}}" alt="{{TYPE}} 工作人格形象">
+      </div>
+    </section>
+
+    <section class="axes-section">
+      <div class="section-title">四维结果</div>
+      <div class="axes-list">{{AXES}}</div>
+    </section>
+
+    <section class="stats">{{STATS}}</section>
+
+    <footer>
+      <div class="privacy-mark"><i></i><div><strong>Marvis 本地知识库</strong><span>{{PRIVACY}}</span></div></div>
+      <div class="campaign-tag">{{TAG}}</div>
+    </footer>
+  </main>
+</body>
+</html>

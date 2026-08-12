@@ -17,9 +17,10 @@
 1. 用户明确授权一个或多个工作目录。
 2. 采集器输出脱敏 `evidence.json`。
 3. 评分器输出 `score.json`。
-4. 报告器读取人格类型并自动选择对应的 `assets/personalities/<TYPE>.png`，生成 `report.json` 和固定 3:4 `report.png`；不再生成 HTML 报告。
-5. 同步生成 `data_collection.csv`、`evidence_table.csv` 和 `data_manifest.json`。
-6. 测试期在报告生成后收集心理 MBTI 和 1-7 分反馈；提交后自动生成 `feedback.json` 并刷新研究数据表。
+4. 报告器读取人格类型并自动选择对应的 `assets/personalities/<TYPE>.png`，填充固定 `900×1200` HTML/CSS 模板。
+5. Chrome/Chromium 对模板做确定性截图，生成最终 `report.png`；`report.html` 只作为中间预览，不交给大模型重新生图。
+6. 同步生成 `data_collection.csv`、`evidence_table.csv` 和 `data_manifest.json`。
+7. 测试期在报告生成后收集心理 MBTI 和 1-7 分反馈；提交后自动生成 `feedback.json` 并刷新研究数据表。
 
 运行结果应写到 Skill 外的独立目录，并在下次扫描时通过 `--exclude` 排除，防止报告再次被当成工作证据。
 
@@ -32,5 +33,6 @@
 
 - 本地文件扫描和明确授权目录。
 - Python 3 运行环境。
-- Pillow 图像渲染能力与中文字体；不依赖浏览器截图。
+- Chrome/Chromium 无头截图能力。
+- Python 标准库校验最终 PNG 尺寸和文件有效性，不需要额外图像生成依赖。
 - 可选：端侧文档语义标签、应用活跃度代理。缺失时对应指标从分母移除，不计零分。
